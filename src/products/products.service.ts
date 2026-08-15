@@ -12,70 +12,70 @@ export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findAll(
-  search?: string,
-  categoryId?: string,
-  page = 1,
-  limit = 10,
-) {
-  page = Math.max(1, page);
-  limit = Math.min(Math.max(1, limit), 100);
+    search?: string,
+    categoryId?: string,
+    page = 1,
+    limit = 10,
+  ) {
+    page = Math.max(1, page);
+    limit = Math.min(Math.max(1, limit), 100);
 
-  const skip = (page - 1) * limit;
+    const skip = (page - 1) * limit;
 
-  const where = {
-    isActive: true,
+    const where = {
+      isActive: true,
 
-    ...(search && {
-      OR: [
-        {
-          name: {
-            contains: search,
-            mode: 'insensitive' as const,
+      ...(search && {
+        OR: [
+          {
+            name: {
+              contains: search,
+              mode: 'insensitive' as const,
+            },
           },
-        },
-        {
-          description: {
-            contains: search,
-            mode: 'insensitive' as const,
+          {
+            description: {
+              contains: search,
+              mode: 'insensitive' as const,
+            },
           },
+        ],
+      }),
+
+      ...(categoryId && {
+        categoryId,
+      }),
+    };
+
+    const [products, total] = await this.prisma.$transaction([
+      this.prisma.product.findMany({
+        where,
+        include: {
+          category: true,
         },
-      ],
-    }),
+        orderBy: {
+          createdAt: 'desc',
+        },
+        skip,
+        take: limit,
+      }),
 
-    ...(categoryId && {
-      categoryId,
-    }),
-  };
+      this.prisma.product.count({
+        where,
+      }),
+    ]);
 
-  const [products, total] = await this.prisma.$transaction([
-    this.prisma.product.findMany({
-      where,
-      include: {
-        category: true,
+    return {
+      data: products,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
       },
-      orderBy: {
-        createdAt: 'desc',
-      },
-      skip,
-      take: limit,
-    }),
+    };
+  }
 
-    this.prisma.product.count({
-      where,
-    }),
-  ]);
-
-  return {
-    data: products,
-    meta: {
-      page,
-      limit,
-      total,
-      totalPages: Math.ceil(total / limit),
-    },
-  };
-}
-  
   async findOne(id: string) {
     const product = await this.prisma.product.findUnique({
       where: { id },
