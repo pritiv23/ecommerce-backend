@@ -1,2 +1,27 @@
-services: {postgres: {image: postgres:16, container_name: ecommerce-postgres, environment: {POSTGRES_USER: ecommerce, POSTGRES_PASSWORD: ecommerce_password, POSTGRES_DB: ecommerce}, ports: ["5432:5432"], volumes: ["postgres_data:/var/lib/postgresql/data"]}}
-volumes: {postgres_data: {}}
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: ecommerce-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ecommerce
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: .
+    container_name: ecommerce-backend
+    restart: unless-stopped
+    ports:
+      - "3002:3001"
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
