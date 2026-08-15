@@ -1,98 +1,359 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Scalable E-Commerce Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This is a backend project for an e-commerce application.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+I built this project using NestJS, TypeScript, PostgreSQL and Prisma. It
+has user authentication, products, categories, cart, orders, payments
+and admin operations.
 
-## Description
+I also added Swagger for API documentation, DTO validation, JWT
+authentication, Docker and tests.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Tech Stack
 
-## Project setup
+- NestJS
+- TypeScript
+- PostgreSQL
+- Prisma ORM
+- JWT
+- Docker
+- Swagger
+- Jest
+- Supertest
 
-```bash
-$ npm install
-```
+## Features
 
-## Compile and run the project
+### Authentication
 
-```bash
-# development
-$ npm run start
+- User registration
+- User login
+- JWT authentication
+- Get current logged-in user
+- Customer and Admin roles
 
-# watch mode
-$ npm run start:dev
+### Categories
 
-# production mode
-$ npm run start:prod
-```
+- Create category
+- Get all categories
+- Unique category name and slug
 
-## Run tests
+### Products
 
-```bash
-# unit tests
-$ npm run test
+- Create product
+- Get all products
+- Get product by ID
+- Update product
+- Delete product
+- Search products
+- Filter by category
+- Pagination
+- Stock management
 
-# e2e tests
-$ npm run test:e2e
+Product creation, update and delete are available only for admin users.
 
-# test coverage
-$ npm run test:cov
-```
+Product delete is implemented as a soft delete using the `isActive`
+field.
 
-## Deployment
+### Cart
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+- Get current user's cart
+- Add product to cart
+- Update product quantity
+- Remove product from cart
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Each user has one cart.
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+### Orders
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+- Create order from cart
+- View own orders
+- View a particular order
+- Cancel order
+- Admin can view all orders
+- Admin can update order status
 
-## Resources
+Order statuses:
 
-Check out a few resources that may come in handy when working with NestJS:
+- PENDING
+- CONFIRMED
+- SHIPPED
+- DELIVERED
+- CANCELLED
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### Payments
 
-## Support
+- Create payment
+- View own payments
+- Admin can view all payments
+- Process payment
+- Mark payment as failed
+- Refund payment
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Payment methods:
 
-## Stay in touch
+- CARD
+- UPI
+- NET_BANKING
+- COD
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Payment statuses:
 
-## License
+- PENDING
+- PAID
+- FAILED
+- REFUNDED
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+The payment system in this project is simulated. It is not connected to
+a real payment gateway such as Razorpay or Stripe.
+
+## Authentication
+
+After login, the API returns a JWT access token.
+
+For protected APIs, the token is sent as:
+
+Authorization: Bearer <access_token>
+
+There are two roles in the application:
+
+- CUSTOMER
+- ADMIN
+
+Admin-only APIs are protected using the JWT guard and AdminGuard.
+
+## Database
+
+I used PostgreSQL as the database and Prisma as the ORM.
+
+Main database models:
+
+- User
+- Category
+- Product
+- Cart
+- CartItem
+- Order
+- OrderItem
+- Payment
+
+Some important relationships are:
+
+- A user can have one cart.
+- A user can have multiple orders.
+- A category can have multiple products.
+- A cart contains multiple cart items.
+- An order contains multiple order items.
+- An order can have one payment.
+
+The Prisma schema is in:
+
+prisma/schema.prisma
+
+## Project Structure
+
+The main source code is divided into separate modules.
+
+src/
+
+    auth/
+    categories/
+    products/
+    cart/
+    orders/
+    payments/
+    prisma/
+
+    app.module.ts
+    main.ts
+
+Each module contains its controller and service. DTOs are used for
+request validation.
+
+## API
+
+Main API routes:
+
+### Auth
+
+    POST /auth/register
+    POST /auth/login
+    GET  /auth/me
+
+### Categories
+
+    GET  /categories
+    POST /categories
+
+### Products
+
+    GET    /products
+    GET    /products/:id
+    POST   /products
+    PATCH  /products/:id
+    DELETE /products/:id
+
+### Cart
+
+    GET    /cart
+    POST   /cart/items
+    PATCH  /cart/items/:id
+    DELETE /cart/items/:id
+
+### Orders
+
+    POST  /orders
+    GET   /orders
+    GET   /orders/:id
+    PATCH /orders/:id/cancel
+
+Admin:
+
+    GET   /orders/admin/all
+    PATCH /orders/admin/:id/status
+
+### Payments
+
+    POST  /payments/:orderId
+    GET   /payments
+    GET   /payments/:paymentId
+
+Admin:
+
+    GET   /payments/admin/all
+    PATCH /payments/:paymentId/process
+    PATCH /payments/:paymentId/fail
+    PATCH /payments/:paymentId/refund
+
+## Swagger
+
+Swagger is available when the application is running.
+
+  http://localhost:3002/api/docs
+
+Swagger can be used to view and test the APIs.
+
+For protected APIs, login first and use the returned JWT token with the
+Authorize button in Swagger.
+
+## Running the Project
+
+### 1. Install dependencies
+
+    npm install
+
+### 2. Create `.env`
+
+Add the required database and JWT configuration.
+
+Example:
+
+    DATABASE_URL="your-postgresql-database-url"
+    JWT_SECRET="your-secret-key"
+    PORT=3001
+
+Do not upload the actual `.env` file containing secrets.
+
+### 3. Start Docker
+
+    docker compose up -d
+
+### 4. Generate Prisma Client
+
+    npx prisma generate
+
+### 5. Run migrations
+
+    npx prisma migrate dev
+
+### 6. Start the application
+
+    npm run start:dev
+
+The API will run on:
+
+    http://localhost:3002/api/docs
+
+Swagger:
+
+    http://localhost:3002/api/docs
+
+## Testing
+
+Unit tests are written using Jest.
+
+Run unit tests:
+
+    npm test
+
+Current result:
+
+    28/28 tests passed
+
+E2E tests:
+
+    npm run test:e2e
+
+Current result:
+
+    1/1 test passed
+
+I also manually tested the APIs using Swagger and HTTP requests during
+development.
+
+## Docker
+
+The project includes Docker configuration.
+
+Start containers:
+
+    docker compose up -d
+
+Stop containers:
+
+    docker compose down
+
+Check running containers:
+
+    docker ps
+
+## Production Build
+
+Build the project:
+
+    npm run build
+
+Run the production build:
+
+    npm run start:prod
+
+The production build and Docker production container were tested during
+development.
+
+## What I worked on
+
+The main things I worked with in this project were:
+
+- REST APIs using NestJS
+- JWT authentication
+- Role-based authorization
+- PostgreSQL database
+- Prisma ORM
+- Database relationships
+- DTO validation
+- Error handling
+- Docker
+- Swagger
+- Unit testing
+- E2E testing
+- Git and GitHub
+
+## Future Improvements
+
+Some things I can add later:
+
+- Deploy the backend online
+- Add a React/Next.js frontend
+- Integrate a real payment gateway
+- Add Redis caching
+- Add GitHub Actions CI/CD
+- Add application monitoring
