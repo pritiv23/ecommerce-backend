@@ -1,359 +1,489 @@
 # Scalable E-Commerce Backend
 
-This is a backend project for an e-commerce application.
+A backend application for an e-commerce platform built using NestJS, TypeScript, PostgreSQL and Prisma.
 
-I built this project using NestJS, TypeScript, PostgreSQL and Prisma. It
-has user authentication, products, categories, cart, orders, payments
-and admin operations.
-
-I also added Swagger for API documentation, DTO validation, JWT
-authentication, Docker and tests.
+The project covers the main backend operations of an e-commerce system such as authentication, products, categories, cart, orders and payments. It also includes admin authorization, validation, Swagger documentation, testing and Docker support.
 
 ## Tech Stack
 
-- NestJS
-- TypeScript
-- PostgreSQL
-- Prisma ORM
-- JWT
-- Docker
-- Swagger
-- Jest
-- Supertest
+* NestJS
+* TypeScript
+* PostgreSQL
+* Prisma ORM
+* JWT
+* bcrypt
+* Docker
+* Swagger
+* Jest
+* Supertest
 
 ## Features
 
 ### Authentication
 
-- User registration
-- User login
-- JWT authentication
-- Get current logged-in user
-- Customer and Admin roles
+* User registration
+* User login
+* JWT authentication
+* Get logged-in user
+* Password hashing using bcrypt
+* Customer and Admin roles
+* Admin-only routes
 
 ### Categories
 
-- Create category
-- Get all categories
-- Unique category name and slug
+* Create category
+* Get all categories
+* Unique category name and slug
 
 ### Products
 
-- Create product
-- Get all products
-- Get product by ID
-- Update product
-- Delete product
-- Search products
-- Filter by category
-- Pagination
-- Stock management
+* Create product
+* Get all products
+* Get product by ID
+* Update product
+* Delete product
+* Search products
+* Filter products by category
+* Pagination
+* Stock management
 
-Product creation, update and delete are available only for admin users.
+Product create, update and delete operations require admin access.
 
-Product delete is implemented as a soft delete using the `isActive`
-field.
+Products are not permanently deleted. The `isActive` field is used for soft deletion.
 
 ### Cart
 
-- Get current user's cart
-- Add product to cart
-- Update product quantity
-- Remove product from cart
+* Get user's cart
+* Add product to cart
+* Update quantity
+* Remove product from cart
 
 Each user has one cart.
 
 ### Orders
 
-- Create order from cart
-- View own orders
-- View a particular order
-- Cancel order
-- Admin can view all orders
-- Admin can update order status
+* Create order from cart
+* Get user's orders
+* Get order by ID
+* Cancel order
+* Admin can view all orders
+* Admin can update order status
 
 Order statuses:
 
-- PENDING
-- CONFIRMED
-- SHIPPED
-- DELIVERED
-- CANCELLED
+```text
+PENDING
+CONFIRMED
+SHIPPED
+DELIVERED
+CANCELLED
+```
 
 ### Payments
 
-- Create payment
-- View own payments
-- Admin can view all payments
-- Process payment
-- Mark payment as failed
-- Refund payment
+The project contains a simulated payment system.
 
-Payment methods:
+Supported payment methods:
 
-- CARD
-- UPI
-- NET_BANKING
-- COD
+```text
+CARD
+UPI
+NET_BANKING
+COD
+```
 
 Payment statuses:
 
-- PENDING
-- PAID
-- FAILED
-- REFUNDED
+```text
+PENDING
+PAID
+FAILED
+REFUNDED
+```
 
-The payment system in this project is simulated. It is not connected to
-a real payment gateway such as Razorpay or Stripe.
+The payment system is simulated and is not connected to a real payment provider such as Razorpay or Stripe.
+
+---
 
 ## Authentication
 
-After login, the API returns a JWT access token.
+After successful login, the API returns a JWT access token.
 
-For protected APIs, the token is sent as:
+The token is used for protected routes:
 
+```http
 Authorization: Bearer <access_token>
+```
 
-There are two roles in the application:
+There are two roles:
 
-- CUSTOMER
-- ADMIN
+* `CUSTOMER`
+* `ADMIN`
 
-Admin-only APIs are protected using the JWT guard and AdminGuard.
+Admin routes are protected using JWT authentication and an admin guard.
+
+---
 
 ## Database
 
-I used PostgreSQL as the database and Prisma as the ORM.
+PostgreSQL is used as the database and Prisma is used to interact with it.
 
-Main database models:
+Main models:
 
-- User
-- Category
-- Product
-- Cart
-- CartItem
-- Order
-- OrderItem
-- Payment
+* User
+* Category
+* Product
+* Cart
+* CartItem
+* Order
+* OrderItem
+* Payment
 
-Some important relationships are:
+Main relationships:
 
-- A user can have one cart.
-- A user can have multiple orders.
-- A category can have multiple products.
-- A cart contains multiple cart items.
-- An order contains multiple order items.
-- An order can have one payment.
+```text
+User
+ ├── Cart
+ │    └── CartItem
+ │         └── Product
+ │
+ └── Order
+      └── OrderItem
+           └── Product
 
-The Prisma schema is in:
+Category
+ └── Product
 
+Order
+ └── Payment
+```
+
+The database schema is present in:
+
+```text
 prisma/schema.prisma
+```
+
+Database migrations are stored in:
+
+```text
+prisma/migrations/
+```
+
+---
 
 ## Project Structure
 
-The main source code is divided into separate modules.
+```text
+ecommerce-backend/
+│
+├── prisma/
+│   ├── migrations/
+│   ├── schema.prisma
+│   └── seed.ts
+│
+├── src/
+│   ├── auth/
+│   ├── categories/
+│   ├── products/
+│   ├── cart/
+│   ├── orders/
+│   ├── payments/
+│   ├── prisma/
+│   ├── app.module.ts
+│   └── main.ts
+│
+├── test/
+│   └── app.e2e-spec.ts
+│
+├── Dockerfile
+├── docker-compose.yml
+├── prisma.config.ts
+├── package.json
+├── tsconfig.json
+└── README.md
+```
 
-src/
+Each major feature is implemented as a separate NestJS module containing controllers and services.
 
-    auth/
-    categories/
-    products/
-    cart/
-    orders/
-    payments/
-    prisma/
+---
 
-    app.module.ts
-    main.ts
-
-Each module contains its controller and service. DTOs are used for
-request validation.
-
-## API
-
-Main API routes:
+## API Endpoints
 
 ### Auth
 
-    POST /auth/register
-    POST /auth/login
-    GET  /auth/me
+```text
+POST /auth/register
+POST /auth/login
+GET  /auth/me
+```
 
 ### Categories
 
-    GET  /categories
-    POST /categories
+```text
+GET  /categories
+POST /categories
+```
 
 ### Products
 
-    GET    /products
-    GET    /products/:id
-    POST   /products
-    PATCH  /products/:id
-    DELETE /products/:id
+```text
+GET    /products
+GET    /products/:id
+POST   /products
+PATCH  /products/:id
+DELETE /products/:id
+```
 
 ### Cart
 
-    GET    /cart
-    POST   /cart/items
-    PATCH  /cart/items/:id
-    DELETE /cart/items/:id
+```text
+GET    /cart
+POST   /cart/items
+PATCH  /cart/items/:id
+DELETE /cart/items/:id
+```
 
 ### Orders
 
-    POST  /orders
-    GET   /orders
-    GET   /orders/:id
-    PATCH /orders/:id/cancel
+```text
+POST  /orders
+GET   /orders
+GET   /orders/:id
+PATCH /orders/:id/cancel
+```
 
 Admin:
 
-    GET   /orders/admin/all
-    PATCH /orders/admin/:id/status
+```text
+GET   /orders/admin/all
+PATCH /orders/admin/:id/status
+```
 
 ### Payments
 
-    POST  /payments/:orderId
-    GET   /payments
-    GET   /payments/:paymentId
+```text
+POST /payments/:orderId
+GET  /payments
+GET  /payments/:paymentId
+```
 
 Admin:
 
-    GET   /payments/admin/all
-    PATCH /payments/:paymentId/process
-    PATCH /payments/:paymentId/fail
-    PATCH /payments/:paymentId/refund
+```text
+GET   /payments/admin/all
+PATCH /payments/:paymentId/process
+PATCH /payments/:paymentId/fail
+PATCH /payments/:paymentId/refund
+```
+
+---
 
 ## Swagger
 
-Swagger is available when the application is running.
+Swagger is used for API documentation and testing.
 
-  http://localhost:3002/api/docs
+When running the project locally:
 
-Swagger can be used to view and test the APIs.
+```text
+http://localhost:3002/api/docs
+```
 
-For protected APIs, login first and use the returned JWT token with the
-Authorize button in Swagger.
+After logging in, the JWT token can be added using the **Authorize** button in Swagger.
 
-## Running the Project
+---
 
-### 1. Install dependencies
+## Running Locally
 
-    npm install
+### 1. Clone the repository
 
-### 2. Create `.env`
+```bash
+git clone https://github.com/pritiv23/ecommerce-backend.git
+cd ecommerce-backend
+```
 
-Add the required database and JWT configuration.
+### 2. Install dependencies
 
-Example:
+```bash
+npm install
+```
 
-    DATABASE_URL="your-postgresql-database-url"
-    JWT_SECRET="your-secret-key"
-    PORT=3001
+### 3. Create `.env`
 
-Do not upload the actual `.env` file containing secrets.
+Add the database URL and JWT secret:
 
-### 3. Start Docker
+```env
+DATABASE_URL="your-database-url"
+JWT_SECRET="your-secret"
+PORT=3001
+```
 
-    docker compose up -d
+The actual `.env` file should not be committed to GitHub.
 
-### 4. Generate Prisma Client
+### 4. Start Docker
 
-    npx prisma generate
+```bash
+docker compose up -d
+```
 
-### 5. Run migrations
+### 5. Generate Prisma Client
 
-    npx prisma migrate dev
+```bash
+npx prisma generate
+```
 
-### 6. Start the application
+### 6. Run migrations
 
-    npm run start:dev
+```bash
+npx prisma migrate dev
+```
 
-The API will run on:
+### 7. Seed the database
 
-    http://localhost:3002/api/docs
+```bash
+npx prisma db seed
+```
+
+The seed creates an admin user, categories and sample products.
+
+Demo admin credentials:
+
+```text
+Email: admin@example.com
+Password: Admin@123
+```
+
+### 8. Start the server
+
+```bash
+npm run start:dev
+```
 
 Swagger:
 
-    http://localhost:3002/api/docs
+```text
+http://localhost:3002/api/docs
+```
+
+---
 
 ## Testing
 
-Unit tests are written using Jest.
+Unit tests:
 
-Run unit tests:
-
-    npm test
-
-Current result:
-
-    28/28 tests passed
+```bash
+npm test
+```
 
 E2E tests:
 
-    npm run test:e2e
+```bash
+npm run test:e2e
+```
 
-Current result:
+Build:
 
-    1/1 test passed
+```bash
+npm run build
+```
 
-I also manually tested the APIs using Swagger and HTTP requests during
-development.
+The APIs were also tested manually using Swagger and `curl`.
+
+---
 
 ## Docker
 
-The project includes Docker configuration.
+Start the containers:
 
-Start containers:
+```bash
+docker compose up -d
+```
 
-    docker compose up -d
+Stop the containers:
 
-Stop containers:
-
-    docker compose down
+```bash
+docker compose down
+```
 
 Check running containers:
 
-    docker ps
+```bash
+docker ps
+```
 
-## Production Build
+---
 
-Build the project:
+## Deployment
 
-    npm run build
+The backend has also been deployed on Render.
 
-Run the production build:
+Backend URL:
 
-    npm run start:prod
+```text
+https://ecommerce-backend-w7q9.onrender.com
+```
 
-The production build and Docker production container were tested during
-development.
+Some public endpoints can be tested directly, for example:
 
-## What I worked on
+```bash
+curl https://ecommerce-backend-w7q9.onrender.com/categories
+```
 
-The main things I worked with in this project were:
+```bash
+curl https://ecommerce-backend-w7q9.onrender.com/products
+```
 
-- REST APIs using NestJS
-- JWT authentication
-- Role-based authorization
-- PostgreSQL database
-- Prisma ORM
-- Database relationships
-- DTO validation
-- Error handling
-- Docker
-- Swagger
-- Unit testing
-- E2E testing
-- Git and GitHub
+The production database is PostgreSQL hosted on Render.
+
+---
+
+## Example Flow
+
+A basic customer flow in the application is:
+
+```text
+Register
+   ↓
+Login
+   ↓
+Get JWT token
+   ↓
+View products
+   ↓
+Add product to cart
+   ↓
+Create order
+   ↓
+Create payment
+   ↓
+Process payment
+   ↓
+Admin updates order status
+```
+
+I tested this flow using a customer account and an admin account.
+
+---
 
 ## Future Improvements
 
-Some things I can add later:
+Some things that can be added later:
 
-- Deploy the backend online
-- Add a React/Next.js frontend
-- Integrate a real payment gateway
-- Add Redis caching
-- Add GitHub Actions CI/CD
-- Add application monitoring
+* React/Next.js frontend
+* Real payment gateway
+* Redis caching
+* Rate limiting
+* Refresh tokens
+* Email notifications
+* CI/CD using GitHub Actions
+* Logging and monitoring
+
+---
+
+## Author
+
+**Priti Verma**
+
+B.Tech, IIT Kanpur
+
+GitHub: https://github.com/pritiv23
